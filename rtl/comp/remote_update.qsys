@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system name="$${FILENAME}">
+ <component
+   name="$${FILENAME}"
+   displayName="$${FILENAME}"
+   version="1.0"
+   description=""
+   tags="INTERNAL_COMPONENT=true"
+   categories="" />
+ <parameter name="bonusData"><![CDATA[bonusData 
+{
+   element remote_update_0
+   {
+      datum _sortIndex
+      {
+         value = "0";
+         type = "int";
+      }
+   }
+}
+]]></parameter>
+ <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
+ <parameter name="device" value="10CL025YU256C8G" />
+ <parameter name="deviceFamily" value="Cyclone 10 LP" />
+ <parameter name="deviceSpeedGrade" value="8" />
+ <parameter name="fabricMode" value="QSYS" />
+ <parameter name="generateLegacySim" value="false" />
+ <parameter name="generationId" value="0" />
+ <parameter name="globalResetBus" value="false" />
+ <parameter name="hdlLanguage" value="VERILOG" />
+ <parameter name="hideFromIPCatalog" value="true" />
+ <parameter name="lockedInterfaceDefinition" value="" />
+ <parameter name="maxAdditionalLatency" value="1" />
+ <parameter name="projectName" value="" />
+ <parameter name="sopcBorderPoints" value="false" />
+ <parameter name="systemHash" value="0" />
+ <parameter name="testBenchDutName" value="" />
+ <parameter name="timeStamp" value="0" />
+ <parameter name="useTestBenchNamingPattern" value="false" />
+ <instanceScript></instanceScript>
+ <interface name="asmi_addr" internal="remote_update_0.asmi_addr" />
+ <interface name="asmi_busy" internal="remote_update_0.asmi_busy" />
+ <interface name="asmi_data_valid" internal="remote_update_0.asmi_data_valid" />
+ <interface name="asmi_dataout" internal="remote_update_0.asmi_dataout" />
+ <interface name="asmi_rden" internal="remote_update_0.asmi_rden" />
+ <interface name="asmi_read" internal="remote_update_0.asmi_read" />
+ <interface
+   name="avl_csr"
+   internal="remote_update_0.avl_csr"
+   type="avalon"
+   dir="end">
+  <port name="avl_csr_write" internal="avl_csr_write" />
+  <port name="avl_csr_read" internal="avl_csr_read" />
+  <port name="avl_csr_writedata" internal="avl_csr_writedata" />
+  <port name="avl_csr_readdata" internal="avl_csr_readdata" />
+  <port name="avl_csr_readdatavalid" internal="avl_csr_readdatavalid" />
+  <port name="avl_csr_waitrequest" internal="avl_csr_waitrequest" />
+  <port name="avl_csr_address" internal="avl_csr_address" />
+ </interface>
+ <interface name="busy" internal="remote_update_0.busy" />
+ <interface name="clock" internal="remote_update_0.clock" type="clock" dir="end">
+  <port name="clock" internal="clock" />
+ </interface>
+ <interface name="data_in" internal="remote_update_0.data_in" />
+ <interface name="data_out" internal="remote_update_0.data_out" />
+ <interface name="param" internal="remote_update_0.param" />
+ <interface name="pof_error" internal="remote_update_0.pof_error" />
+ <interface name="read_param" internal="remote_update_0.read_param" />
+ <interface name="read_source" internal="remote_update_0.read_source" />
+ <interface name="reconfig" internal="remote_update_0.reconfig" />
+ <interface name="reset" internal="remote_update_0.reset" type="reset" dir="end">
+  <port name="reset" internal="reset" />
+ </interface>
+ <interface name="reset_timer" internal="remote_update_0.reset_timer" />
+ <interface name="write_param" internal="remote_update_0.write_param" />
+ <module
+   name="remote_update_0"
+   kind="altera_remote_update"
+   version="20.1"
+   enabled="1"
+   autoexport="1">
+  <parameter name="AUTO_DEVICE_SPEEDGRADE" value="8" />
+  <parameter name="CBX_AUTO_BLACKBOX" value="ALL" />
+  <parameter name="DEVICE" value="10CL025YU256C8G" />
+  <parameter name="DEVICE_FAMILY" value="Cyclone 10 LP" />
+  <parameter name="GUI_config_device" value="EPCQ16A" />
+  <parameter name="check_app_pof" value="false" />
+  <parameter name="check_avalon_interface" value="true" />
+  <parameter name="m_support_write_config_check" value="true" />
+  <parameter name="operation_mode" value="REMOTE" />
+ </module>
+ <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
+ <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
+ <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />
+ <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
+</system>

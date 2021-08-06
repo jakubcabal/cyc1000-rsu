@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system name="$${FILENAME}">
+ <component
+   name="$${FILENAME}"
+   displayName="$${FILENAME}"
+   version="1.0"
+   description=""
+   tags="INTERNAL_COMPONENT=true"
+   categories="" />
+ <parameter name="bonusData"><![CDATA[bonusData 
+{
+   element asmi_parallel2_top_0
+   {
+      datum _sortIndex
+      {
+         value = "0";
+         type = "int";
+      }
+   }
+}
+]]></parameter>
+ <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
+ <parameter name="device" value="10CL025YU256C8G" />
+ <parameter name="deviceFamily" value="Cyclone 10 LP" />
+ <parameter name="deviceSpeedGrade" value="8" />
+ <parameter name="fabricMode" value="QSYS" />
+ <parameter name="generateLegacySim" value="false" />
+ <parameter name="generationId" value="0" />
+ <parameter name="globalResetBus" value="false" />
+ <parameter name="hdlLanguage" value="VERILOG" />
+ <parameter name="hideFromIPCatalog" value="true" />
+ <parameter name="lockedInterfaceDefinition" value="" />
+ <parameter name="maxAdditionalLatency" value="1" />
+ <parameter name="projectName" value="" />
+ <parameter name="sopcBorderPoints" value="false" />
+ <parameter name="systemHash" value="0" />
+ <parameter name="testBenchDutName" value="" />
+ <parameter name="timeStamp" value="0" />
+ <parameter name="useTestBenchNamingPattern" value="false" />
+ <instanceScript></instanceScript>
+ <interface name="atom_ports" internal="asmi_parallel2_top_0.atom_ports" />
+ <interface
+   name="avl_csr"
+   internal="asmi_parallel2_top_0.avl_csr"
+   type="avalon"
+   dir="end">
+  <port name="avl_csr_address" internal="avl_csr_address" />
+  <port name="avl_csr_read" internal="avl_csr_read" />
+  <port name="avl_csr_readdata" internal="avl_csr_readdata" />
+  <port name="avl_csr_write" internal="avl_csr_write" />
+  <port name="avl_csr_writedata" internal="avl_csr_writedata" />
+  <port name="avl_csr_waitrequest" internal="avl_csr_waitrequest" />
+  <port name="avl_csr_readdatavalid" internal="avl_csr_readdatavalid" />
+ </interface>
+ <interface
+   name="avl_mem"
+   internal="asmi_parallel2_top_0.avl_mem"
+   type="avalon"
+   dir="end">
+  <port name="avl_mem_write" internal="avl_mem_write" />
+  <port name="avl_mem_burstcount" internal="avl_mem_burstcount" />
+  <port name="avl_mem_waitrequest" internal="avl_mem_waitrequest" />
+  <port name="avl_mem_read" internal="avl_mem_read" />
+  <port name="avl_mem_address" internal="avl_mem_address" />
+  <port name="avl_mem_writedata" internal="avl_mem_writedata" />
+  <port name="avl_mem_readdata" internal="avl_mem_readdata" />
+  <port name="avl_mem_readdatavalid" internal="avl_mem_readdatavalid" />
+  <port name="avl_mem_byteenable" internal="avl_mem_byteenable" />
+ </interface>
+ <interface name="clk" internal="asmi_parallel2_top_0.clk" type="clock" dir="end">
+  <port name="clk_clk" internal="clk_clk" />
+ </interface>
+ <interface name="qspi_pins" internal="asmi_parallel2_top_0.qspi_pins" />
+ <interface
+   name="reset"
+   internal="asmi_parallel2_top_0.reset"
+   type="reset"
+   dir="end">
+  <port name="reset_reset_n" internal="reset_reset_n" />
+ </interface>
+ <module
+   name="asmi_parallel2_top_0"
+   kind="altera_asmi_parallel2_top"
+   version="20.1"
+   enabled="1"
+   autoexport="1">
+  <parameter name="AUTO_DEVICE" value="10CL025YU256C8G" />
+  <parameter name="AUTO_DEVICE_SPEEDGRADE" value="8" />
+  <parameter name="CHIP_SELECT_EN" value="true" />
+  <parameter name="DATA_WIDTH" value="STANDARD" />
+  <parameter name="DEVICE_FAMILY" value="Cyclone 10 LP" />
+  <parameter name="ENABLE_SIM_MODEL" value="false" />
+  <parameter name="FLASH_TYPE" value="EPCQ16A" />
+  <parameter name="INTENDED_DEVICE_FAMILY" value="Cyclone 10 LP" />
+  <parameter name="NCS_NUM" value="1" />
+  <parameter name="PIPE_CMD_GEN_CMD" value="0" />
+  <parameter name="PIPE_CSR" value="0" />
+  <parameter name="PIPE_MUX_CMD" value="0" />
+  <parameter name="PIPE_XIP" value="0" />
+  <parameter name="USE_ASMIBLOCK" value="false" />
+  <parameter name="USE_GPIO" value="false" />
+ </module>
+ <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
+ <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
+ <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />
+ <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
+</system>
