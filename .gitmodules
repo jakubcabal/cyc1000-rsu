@@ -1,0 +1,3 @@
+[submodule "rtl/comp/uart-for-fpga"]
+	path = rtl/comp/uart-for-fpga
+	url = git@github.com:jakubcabal/uart-for-fpga.git
