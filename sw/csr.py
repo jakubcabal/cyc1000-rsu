@@ -12,7 +12,7 @@ sys.path.append('../rtl/comp/uart-for-fpga/examples/uart2wb/sw/')
 
 from wishbone import wishbone
 
-wb = wishbone("COM1") # on Linux use "/dev/ttyUSB0"
+wb = wishbone("COM1",9600,32) # on Linux use "/dev/ttyUSB0"
 
 rd = 0xDEADDEAD
 

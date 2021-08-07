@@ -27,8 +27,9 @@ end entity;
 
 architecture FULL of FPGA is
 
+    constant WB_ADDR_WIDTH  : natural := 32;
     constant WB_BASE_PORTS  : natural := 4;  -- system, rsu, asmi_csr, asmi_mem
-    constant WB_BASE_OFFSET : natural := 14;
+    constant WB_BASE_OFFSET : natural := WB_ADDR_WIDTH-2;
 
     signal rst_btn                         : std_logic;
     signal clk                             : std_logic;
@@ -38,7 +39,7 @@ architecture FULL of FPGA is
     signal wb_master_cyc                   : std_logic;
     signal wb_master_stb                   : std_logic;
     signal wb_master_we                    : std_logic;
-    signal wb_master_addr                  : std_logic_vector(15 downto 0);
+    signal wb_master_addr                  : std_logic_vector(WB_ADDR_WIDTH-1 downto 0);
     signal wb_master_dout                  : std_logic_vector(31 downto 0);
     signal wb_master_stall                 : std_logic;
     signal wb_master_ack                   : std_logic;
@@ -47,7 +48,7 @@ architecture FULL of FPGA is
     signal wb_mbs_cyc                      : std_logic_vector(WB_BASE_PORTS-1 downto 0);
     signal wb_mbs_stb                      : std_logic_vector(WB_BASE_PORTS-1 downto 0);
     signal wb_mbs_we                       : std_logic_vector(WB_BASE_PORTS-1 downto 0);
-    signal wb_mbs_addr                     : std_logic_vector(WB_BASE_PORTS*16-1 downto 0);
+    signal wb_mbs_addr                     : std_logic_vector(WB_BASE_PORTS*WB_ADDR_WIDTH-1 downto 0);
     signal wb_mbs_din                      : std_logic_vector(WB_BASE_PORTS*32-1 downto 0);
     signal wb_mbs_stall                    : std_logic_vector(WB_BASE_PORTS-1 downto 0);
     signal wb_mbs_ack                      : std_logic_vector(WB_BASE_PORTS-1 downto 0);
@@ -57,16 +58,19 @@ architecture FULL of FPGA is
     signal asmi_mem_avl_csr_write          : std_logic;
     signal asmi_mem_avl_csr_read           : std_logic;
     signal asmi_mem_avl_csr_readdatavalid  : std_logic;
+    signal asmi_mem_avl_csr_writevld       : std_logic;
     signal asmi_mem_avl_csr_readdata       : std_logic_vector(31 downto 0);
     signal asmi_mem_avl_csr_writedata      : std_logic_vector(31 downto 0);
 
     signal asmi_csr_avl_csr_write          : std_logic;
     signal asmi_csr_avl_csr_read           : std_logic;
     signal asmi_csr_avl_csr_readdatavalid  : std_logic;
+    signal asmi_csr_avl_csr_writevld       : std_logic;
 
     signal rsu_avl_csr_write               : std_logic;
     signal rsu_avl_csr_read                : std_logic;
     signal rsu_avl_csr_readdatavalid       : std_logic;
+    signal rsu_avl_csr_writevld            : std_logic;
 
     component asmi_p2 is
         port (
@@ -121,8 +125,9 @@ begin
 
     uart2wbm_i : entity work.UART2WBM
     generic map (
-        CLK_FREQ  => 12e6,
-        BAUD_RATE => 9600
+        CLK_FREQ   => 12e6,
+        BAUD_RATE  => 9600,
+        ADDR_WIDTH => WB_ADDR_WIDTH
     )
     port map (
         CLK      => clk,
@@ -144,6 +149,7 @@ begin
     wb_splitter_base_i : entity work.WB_SPLITTER
     generic map (
         MASTER_PORTS => WB_BASE_PORTS,
+        ADDR_WIDTH   => WB_ADDR_WIDTH,
         ADDR_OFFSET  => WB_BASE_OFFSET
     )
     port map (
@@ -179,7 +185,7 @@ begin
         WB_CYC   => wb_mbs_cyc(0),
         WB_STB   => wb_mbs_stb(0),
         WB_WE    => wb_mbs_we(0),
-        WB_ADDR  => wb_mbs_addr((0+1)*16-1 downto 0*16),
+        WB_ADDR  => wb_mbs_addr(0*WB_ADDR_WIDTH+16-1 downto 0*WB_ADDR_WIDTH),
         WB_DIN   => wb_mbs_dout((0+1)*32-1 downto 0*32),
         WB_STALL => wb_mbs_stall(0),
         WB_ACK   => wb_mbs_ack(0),
@@ -189,7 +195,15 @@ begin
     --rsu_avl_csr_addr  <= wb_mbs_addr(1*16+5-1 downto 1*16);
     rsu_avl_csr_write <= wb_mbs_stb(1) and wb_mbs_we(1);
     rsu_avl_csr_read  <= wb_mbs_stb(1) and not wb_mbs_we(1);
-    wb_mbs_ack(1) <= rsu_avl_csr_readdatavalid or (rsu_avl_csr_write and not wb_mbs_stall(1));
+
+    process (clk)
+    begin
+        if (rising_edge(clk)) then
+            rsu_avl_csr_writevld <= rsu_avl_csr_write and not wb_mbs_stall(1);
+        end if;
+    end process;
+
+    wb_mbs_ack(1) <= rsu_avl_csr_readdatavalid or rsu_avl_csr_writevld;
 
     rsu_i : component remote_update
     port map (
@@ -201,19 +215,34 @@ begin
         avl_csr_readdata      => wb_mbs_din((1+1)*32-1 downto 1*32),      --        .readdata
         avl_csr_readdatavalid => rsu_avl_csr_readdatavalid, --        .readdatavalid
         avl_csr_waitrequest   => wb_mbs_stall(1),   --        .waitrequest
-        avl_csr_address       => wb_mbs_addr(1*16+5-1 downto 1*16)        --        .address
+        avl_csr_address       => wb_mbs_addr(1*WB_ADDR_WIDTH+5-1 downto 1*WB_ADDR_WIDTH)        --        .address
     );
 
     --asmi_csr_avl_csr_addr  <= wb_mbs_addr(2*16+8-1 downto 2*16+2);
     asmi_csr_avl_csr_write <= wb_mbs_stb(2) and wb_mbs_we(2);
     asmi_csr_avl_csr_read  <= wb_mbs_stb(2) and not wb_mbs_we(2);
-    wb_mbs_ack(2) <= asmi_csr_avl_csr_readdatavalid or (asmi_csr_avl_csr_write and not wb_mbs_stall(2));
 
-    asmi_mem_avl_csr_addr  <= "00000" & wb_mbs_addr(3*16+14-1 downto 3*16);
+    process (clk)
+    begin
+        if (rising_edge(clk)) then
+            asmi_csr_avl_csr_writevld <= asmi_csr_avl_csr_write and not wb_mbs_stall(2);
+        end if;
+    end process;
+
+    wb_mbs_ack(2) <= asmi_csr_avl_csr_readdatavalid or asmi_csr_avl_csr_writevld;
+
+    asmi_mem_avl_csr_addr  <= wb_mbs_addr(3*WB_ADDR_WIDTH+19-1 downto 3*WB_ADDR_WIDTH);
     asmi_mem_avl_csr_write <= wb_mbs_stb(3) and wb_mbs_we(3);
     asmi_mem_avl_csr_read  <= wb_mbs_stb(3) and not wb_mbs_we(3);
+
+    process (clk)
+    begin
+        if (rising_edge(clk)) then
+            asmi_mem_avl_csr_writevld <= asmi_mem_avl_csr_write and not wb_mbs_stall(3);
+        end if;
+    end process;
     
-    wb_mbs_ack(3) <= asmi_mem_avl_csr_readdatavalid or (asmi_mem_avl_csr_write and not wb_mbs_stall(3));
+    wb_mbs_ack(3) <= asmi_mem_avl_csr_readdatavalid or asmi_mem_avl_csr_writevld;
 
     data_reverse_g : for i in 0 to 31 generate
         wb_mbs_din(3*32+i) <= asmi_mem_avl_csr_readdata(31-i);
@@ -224,7 +253,7 @@ begin
     port map (
         clk_clk               => clk,         --     clk.clk
         reset_reset_n         => rst_n,         --   reset.reset_n
-        avl_csr_address       => wb_mbs_addr(2*16+6-1 downto 2*16),       -- avl_csr.address
+        avl_csr_address       => wb_mbs_addr(2*WB_ADDR_WIDTH+6-1 downto 2*WB_ADDR_WIDTH),       -- avl_csr.address
         avl_csr_read          => asmi_csr_avl_csr_read,          --        .read
         avl_csr_readdata      => wb_mbs_din((2+1)*32-1 downto 2*32),      --        .readdata
         avl_csr_write         => asmi_csr_avl_csr_write,         --        .write

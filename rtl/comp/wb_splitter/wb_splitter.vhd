@@ -13,6 +13,7 @@ use IEEE.MATH_REAL.ALL;
 entity WB_SPLITTER is
     Generic (
         MASTER_PORTS : natural := 2;
+        ADDR_WIDTH   : natural := 16;
         ADDR_OFFSET  : natural := 8
     );
     Port (
@@ -24,7 +25,7 @@ entity WB_SPLITTER is
         WB_S_CYC   : in  std_logic;
         WB_S_STB   : in  std_logic;
         WB_S_WE    : in  std_logic;
-        WB_S_ADDR  : in  std_logic_vector(15 downto 0);
+        WB_S_ADDR  : in  std_logic_vector(ADDR_WIDTH-1 downto 0);
         WB_S_DIN   : in  std_logic_vector(31 downto 0);
         WB_S_STALL : out std_logic;
         WB_S_ACK   : out std_logic;
@@ -34,7 +35,7 @@ entity WB_SPLITTER is
         WB_M_CYC   : out std_logic_vector(MASTER_PORTS-1 downto 0);
         WB_M_STB   : out std_logic_vector(MASTER_PORTS-1 downto 0);
         WB_M_WE    : out std_logic_vector(MASTER_PORTS-1 downto 0);
-        WB_M_ADDR  : out std_logic_vector(MASTER_PORTS*16-1 downto 0);
+        WB_M_ADDR  : out std_logic_vector(MASTER_PORTS*ADDR_WIDTH-1 downto 0);
         WB_M_DOUT  : out std_logic_vector(MASTER_PORTS*32-1 downto 0);
         WB_M_STALL : in  std_logic_vector(MASTER_PORTS-1 downto 0);
         WB_M_ACK   : in  std_logic_vector(MASTER_PORTS-1 downto 0);
@@ -45,7 +46,7 @@ end entity;
 architecture RTL of WB_SPLITTER is
 
     constant PORT_SEL_W  : natural := integer(ceil(log2(real(MASTER_PORTS))));
-    constant WB_ADDR_GND : std_logic_vector(16-ADDR_OFFSET-1 downto 0) := (others => '0');
+    constant WB_ADDR_GND : std_logic_vector(ADDR_WIDTH-ADDR_OFFSET-1 downto 0) := (others => '0');
 
     signal wb_port_sel_bin : std_logic_vector(PORT_SEL_W-1 downto 0);
     signal wb_port_sel     : std_logic_vector(MASTER_PORTS-1 downto 0);
@@ -69,7 +70,7 @@ begin
         WB_M_CYC(i) <= WB_S_CYC and wb_port_sel(i);
         WB_M_STB(i) <= WB_S_STB and wb_port_sel(i);
         WB_M_WE(i)  <= WB_S_WE and wb_port_sel(i);
-        WB_M_ADDR((i+1)*16-1 downto i*16) <= WB_ADDR_GND & WB_S_ADDR(ADDR_OFFSET-1 downto 0);
+        WB_M_ADDR((i+1)*ADDR_WIDTH-1 downto i*ADDR_WIDTH) <= WB_ADDR_GND & WB_S_ADDR(ADDR_OFFSET-1 downto 0);
         WB_M_DOUT((i+1)*32-1 downto i*32) <= WB_S_DIN;
     end generate;
 
