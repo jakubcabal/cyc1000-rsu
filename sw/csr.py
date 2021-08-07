@@ -23,9 +23,13 @@ if len(sys.argv) == 3:
     wb.write(arg1,arg2)
 elif len(sys.argv) == 2:
     arg1 = int(sys.argv[1],0)
-    print("Read from 0x%02X" % arg1)
     rd = wb.read(arg1)
-    print("0x%02X" % rd)
+    print("0x%08X" % rd)
+    #for x in range(0, 127, 1):
+    #    addr = arg1 + x
+    #    print("Read from 0x%02X" % addr)
+    #    rd = wb.read(addr)
+    #    print("0x%08X" % rd)
 else:
     print("Argument error!")
     print("Help: csr.py addr data")

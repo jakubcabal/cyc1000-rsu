@@ -10,6 +10,10 @@ set_global_assignment -name DEVICE 10CL025YU256C8G
 set_global_assignment -name TOP_LEVEL_ENTITY FPGA
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
 set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name USE_CONFIGURATION_DEVICE ON
+set_global_assignment -name STRATIXIII_UPDATE_MODE REMOTE
+set_global_assignment -name CYCLONEIII_CONFIGURATION_DEVICE EPCQ16A
+set_global_assignment -name GENERATE_RBF_FILE ON
 
 # PROJECT VHDL FILES
 set_global_assignment -name VHDL_FILE ../comp/base/rst_sync.vhd

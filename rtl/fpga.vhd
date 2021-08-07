@@ -27,44 +27,46 @@ end entity;
 
 architecture FULL of FPGA is
 
-    constant WB_BASE_PORTS  : natural := 4;  -- system, rsu, asmi_csr, asmi_data
+    constant WB_BASE_PORTS  : natural := 4;  -- system, rsu, asmi_csr, asmi_mem
     constant WB_BASE_OFFSET : natural := 14;
 
-    signal rst_btn          : std_logic;
-    signal clk              : std_logic;
-    signal rst              : std_logic;
-    signal rst_n            : std_logic;
+    signal rst_btn                         : std_logic;
+    signal clk                             : std_logic;
+    signal rst                             : std_logic;
+    signal rst_n                           : std_logic;
 
-    signal wb_master_cyc    : std_logic;
-    signal wb_master_stb    : std_logic;
-    signal wb_master_we     : std_logic;
-    signal wb_master_addr   : std_logic_vector(15 downto 0);
-    signal wb_master_dout   : std_logic_vector(31 downto 0);
-    signal wb_master_stall  : std_logic;
-    signal wb_master_ack    : std_logic;
-    signal wb_master_din    : std_logic_vector(31 downto 0);
+    signal wb_master_cyc                   : std_logic;
+    signal wb_master_stb                   : std_logic;
+    signal wb_master_we                    : std_logic;
+    signal wb_master_addr                  : std_logic_vector(15 downto 0);
+    signal wb_master_dout                  : std_logic_vector(31 downto 0);
+    signal wb_master_stall                 : std_logic;
+    signal wb_master_ack                   : std_logic;
+    signal wb_master_din                   : std_logic_vector(31 downto 0);
 
-    signal wb_mbs_cyc       : std_logic_vector(WB_BASE_PORTS-1 downto 0);
-    signal wb_mbs_stb       : std_logic_vector(WB_BASE_PORTS-1 downto 0);
-    signal wb_mbs_we        : std_logic_vector(WB_BASE_PORTS-1 downto 0);
-    signal wb_mbs_addr      : std_logic_vector(WB_BASE_PORTS*16-1 downto 0);
-    signal wb_mbs_din       : std_logic_vector(WB_BASE_PORTS*32-1 downto 0);
-    signal wb_mbs_stall     : std_logic_vector(WB_BASE_PORTS-1 downto 0);
-    signal wb_mbs_ack       : std_logic_vector(WB_BASE_PORTS-1 downto 0);
-    signal wb_mbs_dout      : std_logic_vector(WB_BASE_PORTS*32-1 downto 0);
+    signal wb_mbs_cyc                      : std_logic_vector(WB_BASE_PORTS-1 downto 0);
+    signal wb_mbs_stb                      : std_logic_vector(WB_BASE_PORTS-1 downto 0);
+    signal wb_mbs_we                       : std_logic_vector(WB_BASE_PORTS-1 downto 0);
+    signal wb_mbs_addr                     : std_logic_vector(WB_BASE_PORTS*16-1 downto 0);
+    signal wb_mbs_din                      : std_logic_vector(WB_BASE_PORTS*32-1 downto 0);
+    signal wb_mbs_stall                    : std_logic_vector(WB_BASE_PORTS-1 downto 0);
+    signal wb_mbs_ack                      : std_logic_vector(WB_BASE_PORTS-1 downto 0);
+    signal wb_mbs_dout                     : std_logic_vector(WB_BASE_PORTS*32-1 downto 0);
 
-    signal asmi_data_avl_csr_addr          : std_logic_vector(18 downto 0);
-    signal asmi_data_avl_csr_write         : std_logic;
-    signal asmi_data_avl_csr_read          : std_logic;
-    signal asmi_data_avl_csr_readdatavalid : std_logic;
+    signal asmi_mem_avl_csr_addr           : std_logic_vector(18 downto 0);
+    signal asmi_mem_avl_csr_write          : std_logic;
+    signal asmi_mem_avl_csr_read           : std_logic;
+    signal asmi_mem_avl_csr_readdatavalid  : std_logic;
+    signal asmi_mem_avl_csr_readdata       : std_logic_vector(31 downto 0);
+    signal asmi_mem_avl_csr_writedata      : std_logic_vector(31 downto 0);
 
-    signal asmi_csr_avl_csr_write         : std_logic;
-    signal asmi_csr_avl_csr_read          : std_logic;
-    signal asmi_csr_avl_csr_readdatavalid : std_logic;
+    signal asmi_csr_avl_csr_write          : std_logic;
+    signal asmi_csr_avl_csr_read           : std_logic;
+    signal asmi_csr_avl_csr_readdatavalid  : std_logic;
 
-    signal rsu_avl_csr_write         : std_logic;
-    signal rsu_avl_csr_read          : std_logic;
-    signal rsu_avl_csr_readdatavalid : std_logic;
+    signal rsu_avl_csr_write               : std_logic;
+    signal rsu_avl_csr_read                : std_logic;
+    signal rsu_avl_csr_readdatavalid       : std_logic;
 
     component asmi_p2 is
         port (
@@ -89,19 +91,19 @@ architecture FULL of FPGA is
         );
     end component asmi_p2;
 
-	component remote_update is
-		port (
-			clock                 : in  std_logic                     := 'X';             -- clk
-			reset                 : in  std_logic                     := 'X';             -- reset
-			avl_csr_write         : in  std_logic                     := 'X';             -- write
-			avl_csr_read          : in  std_logic                     := 'X';             -- read
-			avl_csr_writedata     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			avl_csr_readdata      : out std_logic_vector(31 downto 0);                    -- readdata
-			avl_csr_readdatavalid : out std_logic;                                        -- readdatavalid
-			avl_csr_waitrequest   : out std_logic;                                        -- waitrequest
-			avl_csr_address       : in  std_logic_vector(4 downto 0)  := (others => 'X')  -- address
-		);
-	end component remote_update;
+    component remote_update is
+        port (
+            clock                 : in  std_logic                     := 'X';             -- clk
+            reset                 : in  std_logic                     := 'X';             -- reset
+            avl_csr_write         : in  std_logic                     := 'X';             -- write
+            avl_csr_read          : in  std_logic                     := 'X';             -- read
+            avl_csr_writedata     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+            avl_csr_readdata      : out std_logic_vector(31 downto 0);                    -- readdata
+            avl_csr_readdatavalid : out std_logic;                                        -- readdatavalid
+            avl_csr_waitrequest   : out std_logic;                                        -- waitrequest
+            avl_csr_address       : in  std_logic_vector(4 downto 0)  := (others => 'X')  -- address
+        );
+    end component remote_update;
 
 begin
 
@@ -207,12 +209,18 @@ begin
     asmi_csr_avl_csr_read  <= wb_mbs_stb(2) and not wb_mbs_we(2);
     wb_mbs_ack(2) <= asmi_csr_avl_csr_readdatavalid or (asmi_csr_avl_csr_write and not wb_mbs_stall(2));
 
-    asmi_data_avl_csr_addr  <= "00000" & wb_mbs_addr(3*16+14-1 downto 3*16);
-    asmi_data_avl_csr_write <= wb_mbs_stb(3) and wb_mbs_we(3);
-    asmi_data_avl_csr_read  <= wb_mbs_stb(3) and not wb_mbs_we(3);
-    wb_mbs_ack(3) <= asmi_data_avl_csr_readdatavalid or (asmi_data_avl_csr_write and not wb_mbs_stall(3));
+    asmi_mem_avl_csr_addr  <= "00000" & wb_mbs_addr(3*16+14-1 downto 3*16);
+    asmi_mem_avl_csr_write <= wb_mbs_stb(3) and wb_mbs_we(3);
+    asmi_mem_avl_csr_read  <= wb_mbs_stb(3) and not wb_mbs_we(3);
+    
+    wb_mbs_ack(3) <= asmi_mem_avl_csr_readdatavalid or (asmi_mem_avl_csr_write and not wb_mbs_stall(3));
 
-	asmi_i : component asmi_p2
+    data_reverse_g : for i in 0 to 31 generate
+        wb_mbs_din(3*32+i) <= asmi_mem_avl_csr_readdata(31-i);
+        asmi_mem_avl_csr_writedata(31-i) <= wb_mbs_dout(3*32+1);
+    end generate;
+
+    asmi_i : component asmi_p2
     port map (
         clk_clk               => clk,         --     clk.clk
         reset_reset_n         => rst_n,         --   reset.reset_n
@@ -223,14 +231,14 @@ begin
         avl_csr_writedata     => wb_mbs_dout((2+1)*32-1 downto 2*32),     --        .writedata
         avl_csr_waitrequest   => wb_mbs_stall(2),   --        .waitrequest
         avl_csr_readdatavalid => asmi_csr_avl_csr_readdatavalid, --        .readdatavalid
-        avl_mem_write         => asmi_data_avl_csr_write,         -- avl_mem.write
+        avl_mem_write         => asmi_mem_avl_csr_write,         -- avl_mem.write
         avl_mem_burstcount    => "0000001",    --        .burstcount
         avl_mem_waitrequest   => wb_mbs_stall(3),   --        .waitrequest
-        avl_mem_read          => asmi_data_avl_csr_read,          --        .read
-        avl_mem_address       => asmi_data_avl_csr_addr,       --        .address
-        avl_mem_writedata     => wb_mbs_dout((3+1)*32-1 downto 3*32),     --        .writedata
-        avl_mem_readdata      => wb_mbs_din((3+1)*32-1 downto 3*32),      --        .readdata
-        avl_mem_readdatavalid => asmi_data_avl_csr_readdatavalid, --        .readdatavalid
+        avl_mem_read          => asmi_mem_avl_csr_read,          --        .read
+        avl_mem_address       => asmi_mem_avl_csr_addr,       --        .address
+        avl_mem_writedata     => asmi_mem_avl_csr_writedata,     --        .writedata
+        avl_mem_readdata      => asmi_mem_avl_csr_readdata,      --        .readdata
+        avl_mem_readdatavalid => asmi_mem_avl_csr_readdatavalid, --        .readdatavalid
         avl_mem_byteenable    => (others => '1')     --        .byteenable
     );
 
