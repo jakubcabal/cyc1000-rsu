@@ -126,7 +126,7 @@ begin
     uart2wbm_i : entity work.UART2WBM
     generic map (
         CLK_FREQ   => 12e6,
-        BAUD_RATE  => 9600,
+        BAUD_RATE  => 115200,
         ADDR_WIDTH => WB_ADDR_WIDTH
     )
     port map (
