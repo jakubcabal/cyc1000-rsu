@@ -246,7 +246,7 @@ begin
 
     data_reverse_g : for i in 0 to 31 generate
         wb_mbs_din(3*32+i) <= asmi_mem_avl_csr_readdata(31-i);
-        asmi_mem_avl_csr_writedata(31-i) <= wb_mbs_dout(3*32+1);
+        asmi_mem_avl_csr_writedata(31-i) <= wb_mbs_dout(3*32+i);
     end generate;
 
     asmi_i : component asmi_p2
