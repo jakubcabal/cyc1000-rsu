@@ -11,7 +11,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity FPGA is
     Generic(
-        SDRAM_CTRL_SEL : natural := 0
+        MAGIC_NUMBER : natural := 5
     );
     Port (
         -- System clock and reset button
@@ -270,5 +270,22 @@ begin
         avl_mem_readdatavalid => asmi_mem_avl_csr_readdatavalid, --        .readdatavalid
         avl_mem_byteenable    => (others => '1')     --        .byteenable
     );
+
+    led_ctrl_i : entity work.LED_CTRL
+    generic map (
+        CLK_FREQ  => 12e6,
+        LEDS      => 3
+    )
+    port map (
+        CLK          => clk,
+        RST          => rst,
+        LED_BLINK(0) => asmi_mem_avl_csr_writevld,
+        LED_BLINK(1) => asmi_csr_avl_csr_writevld,
+        LED_BLINK(2) => rsu_avl_csr_writevld,
+        LED_OUT      => LED_OUT(3-1 downto 0)
+    );
+    
+    LED_OUT(3) <= '0';
+    LED_OUT(8-1 downto 4) <= std_logic_vector(to_unsigned(MAGIC_NUMBER,4));
 
 end architecture;

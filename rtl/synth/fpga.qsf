@@ -18,6 +18,7 @@ set_global_assignment -name GENERATE_RBF_FILE ON
 # PROJECT VHDL FILES
 set_global_assignment -name VHDL_FILE ../comp/base/rst_sync.vhd
 set_global_assignment -name VHDL_FILE ../comp/base/sys_module.vhd
+set_global_assignment -name VHDL_FILE ../comp/base/led_ctrl.vhd
 set_global_assignment -name VHDL_FILE ../comp/uart-for-fpga/rtl/comp/uart_clk_div.vhd
 set_global_assignment -name VHDL_FILE ../comp/uart-for-fpga/rtl/comp/uart_debouncer.vhd
 set_global_assignment -name VHDL_FILE ../comp/uart-for-fpga/rtl/comp/uart_parity.vhd
