@@ -74,7 +74,7 @@ begin
         WB_M_DOUT((i+1)*32-1 downto i*32) <= WB_S_DIN;
     end generate;
 
-    process (WB_M_STALL)
+    process (WB_M_STALL, wb_port_sel, WB_S_STB)
     begin
         WB_S_STALL <= '0';
         for i in 0 to MASTER_PORTS-1 loop
