@@ -30,7 +30,7 @@ if rbf_raw_mod > 0:
         print(i)
         rbf_raw += b'\xff'
 
-for i in range(0, len(rbf_raw), 4):
+for i in range(0, len(rbf_raw)-3, 4):
     rbf_list.append(int.from_bytes([rbf_raw[i],rbf_raw[i+1],rbf_raw[i+2],rbf_raw[i+3]], "big"))
     #print("0x%08X" % rbf_list[-1])
 
@@ -44,6 +44,9 @@ wb.write(0x80000011,0x1)
 # read wr status
 wb.read(0x80000002)
 
+percent = len(rbf_list)/100
 for i in range(0, len(rbf_list)):
     addr = 0xC0000000 + i
     wb.write(addr,rbf_list[i])
+    if i % 100 == 0:
+        print(i/percent)
